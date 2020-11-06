@@ -1,8 +1,12 @@
 package de.rki.coronawarnapp.notification
 
-import android.app.*
+
+import android.app.AlarmManager
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.PendingIntent.FLAG_CANCEL_CURRENT
-import android.app.PendingIntent.FLAG_NO_CREATE
 import android.content.Context
 import android.content.Intent
 import android.media.AudioAttributes
@@ -111,13 +115,21 @@ object NotificationHelper {
         Timber.v("Canceled future notifications with id: %s", notificationId)
     }
 
-    private fun scheduleRepeatingNotification(initialTime: Instant, interval: Duration, notificationId: NotificationId) {
+    private fun scheduleRepeatingNotification(
+        initialTime: Instant,
+        interval: Duration,
+        notificationId: NotificationId
+    ) {
         val pendingIntent = createPendingIntentToScheduleNotification(notificationId)
-        val manager = CoronaWarnApplication.getAppContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val manager =
+            CoronaWarnApplication.getAppContext().getSystemService(Context.ALARM_SERVICE) as AlarmManager
         manager.setInexactRepeating(AlarmManager.RTC, initialTime.millis, interval.millis, pendingIntent)
     }
 
-    private fun createPendingIntentToScheduleNotification(notificationId: NotificationId, flag: Int = FLAG_CANCEL_CURRENT) =
+    private fun createPendingIntentToScheduleNotification(
+        notificationId: NotificationId,
+        flag: Int = FLAG_CANCEL_CURRENT
+    ) =
         PendingIntent.getBroadcast(
             CoronaWarnApplication.getAppContext(),
             notificationId,
